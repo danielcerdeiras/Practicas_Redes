@@ -16,7 +16,6 @@ int main(int argc, char** argv){
     //Reserva memoria para un addrinfo con valor 0 para el uso de info.
     memset((void*)&info, 0, sizeof(struct addrinfo));
     info.ai_family = AF_UNSPEC;
-    info.ai_socktype = SOCK_STREAM;
 
     //Dado un host y un servicio, devolviendo la informacion en res y sus caracteristicas en info.
     int ret = getaddrinfo(argv[1], argv[2], &info, &res);
