@@ -36,10 +36,9 @@ int main(int argc, char** argv){
         std::cerr << "Error binding socket\n";
         return -1;
     }
-    freeaddrinfo(res);
 
     int bytes;
-    char buffer[1];
+    char buffer[1]; buffer[0] = ' ';
     char timeBuffer[80];
     char host[NI_MAXHOST];
     char serv[NI_MAXSERV];
@@ -53,28 +52,39 @@ int main(int argc, char** argv){
         }
 
         ret = 0;
-        if (buffer[0] == 't') {
+        
+        if (buffer[0] == 'd') {
             time_t rawTime;
             struct tm* timeInfo;
             time(&rawTime);
             timeInfo = localtime(&rawTime);
-            strftime(timeBuffer, 80, "%Y:%m:%j %p", timeInfo);
-            ret = sendto(sock, timeBuffer, 80, 0, &cliente, clientelen);
+            int timeSize = strftime(timeBuffer, 80, "%Y-%m-%d", timeInfo);
+            ret = sendto(sock, timeBuffer, timeSize, 0, &cliente, clientelen);
         }
-        else if (buffer[0] == 'd') {
+        else if (buffer[0] == 't') {
             time_t rawTime;
             struct tm * timeInfo;
             time(&rawTime);
             timeInfo = localtime(&rawTime);
-            strftime(timeBuffer, 80, "%I-%M-%S", timeInfo);
-            ret = sendto(sock, timeBuffer, 80, 0, &cliente, clientelen);
+            int timeSize = strftime(timeBuffer, 80, "%I:%M:%S %p", timeInfo);
+            ret = sendto(sock, timeBuffer, timeSize, 0, &cliente, clientelen);
         }
-        else if (buffer[0] != 'q') ret = sendto(sock, "Comando no soportado" + buffer[0], 22, 0, &cliente, clientelen);
+        else if (buffer[0] != 'q') std::cout << "Comando no soportado " << buffer[0] << "\n";
         if (ret == -1){
             std::cerr << "Error in sendto\n";
             return -1;
         }
+
+        if (buffer[0] == 'd' || buffer[0] == 't') {
+            ret = getnameinfo(&cliente, clientelen,host, NI_MAXHOST, serv, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV );
+            if (ret != 0){
+                std::cerr << "Error in getnameinfo\n";
+                return -1;
+            }  
+            std::cout << bytes << " bytes de " << host << ":" << serv << "\n";
+        }
     }
+    freeaddrinfo(res);
 
     return 0;
 }
