@@ -69,7 +69,8 @@ int main(int argc, char** argv){
             int timeSize = strftime(timeBuffer, 80, "%I:%M:%S %p", timeInfo);
             ret = sendto(sock, timeBuffer, timeSize, 0, &cliente, clientelen);
         }
-        else if (buffer[0] != 'q') std::cout << "Comando no soportado " << buffer[0] << "\n";
+        else if (buffer[0] == 'q') std::cout << "Saliendo...\n";
+        else std::cout << "Comando no soportado " << buffer[0] << "\n";
         if (ret == -1){
             std::cerr << "Error in sendto\n";
             return -1;
