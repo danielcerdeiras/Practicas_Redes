@@ -4,6 +4,7 @@
 #include <string.h>
 #include <iostream>
 #include <time.h>
+#include <unistd.h>
 
 int main(int argc, char** argv){
     if (argc < 3){
@@ -86,6 +87,10 @@ int main(int argc, char** argv){
         }
     }
     freeaddrinfo(res);
-
+    ret = close(sock);
+    if (ret == -1){
+        std::cerr << "Error closing socket\n";
+        return -1;
+    }
     return 0;
 }
