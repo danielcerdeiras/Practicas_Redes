@@ -75,7 +75,7 @@ int main(int argc, char** argv){
             std::cout << "Conexión terminada\n";
             ret = close(cliente_sd);
             if (ret == -1){
-                std::cerr << "Error closing socket\n";
+                std::cerr << "Error closing client socket\n";
                 return -1;
             }
             cliente_sd = accept(sock, &cliente, &clientelen);
