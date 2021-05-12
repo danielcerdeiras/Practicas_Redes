@@ -30,7 +30,7 @@ int main(int argc, char** argv){
 
         ret = getnameinfo(i->ai_addr, i->ai_addrlen, host, NI_MAXHOST, serv, NI_MAXSERV, NI_NUMERICHOST);
         if (ret != 0){
-        std::cerr << "Error in getnameinfo\n";
+        std::cerr << "getnameinfo error: " << strerror(errno) << "\n";
         return -1;
     }
         std::cout << "Host: " << host << " Port: " << serv << " Family: " << i->ai_family << " Socket Type: " << i->ai_socktype << "\n";

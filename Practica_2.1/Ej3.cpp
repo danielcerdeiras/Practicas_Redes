@@ -29,12 +29,12 @@ int main(int argc, char** argv){
 
     int sock = socket(res1->ai_family, res1->ai_socktype, 0);
     if (sock == -1){
-        std::cerr << "Error creating socket\n";
+        std::cerr << "socket error: " << strerror(errno) << "\n";
         return -1;
     }
     ret = bind(sock, res1->ai_addr, res1->ai_addrlen);
     if (ret == -1){
-        std::cerr << "Error binding socket\n";
+        std::cerr << "bind error: " << strerror(errno) << "\n";
         return -1;
     }
     freeaddrinfo(res1);
@@ -48,13 +48,13 @@ int main(int argc, char** argv){
     }
     ret = sendto(sock, argv[3], sizeof(char), 0, res2->ai_addr, res2->ai_addrlen);
     if (ret == -1){
-        std::cerr << "Error sending message\n";
+        std::cerr << "sendto error: " << strerror(errno) << "\n";
         return -1;
     }
     char buffer[80];
     int bytes = recvfrom(sock, buffer, 80, 0, res2->ai_addr, &res2->ai_addrlen);
     if (bytes == -1){
-        std::cerr << "Error sending message\n";
+        std::cerr << "recvfrom error: " << strerror(errno) << "\n";
         return -1;
     }
     buffer[bytes] = '\0';
@@ -62,7 +62,7 @@ int main(int argc, char** argv){
     freeaddrinfo(res2);
     ret = close(sock);
     if (ret == -1){
-        std::cerr << "Error closing socket\n";
+        std::cerr << "close error: " << strerror(errno) << "\n";
         return -1;
     }
     return 0;

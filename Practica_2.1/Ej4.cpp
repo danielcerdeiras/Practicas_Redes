@@ -30,18 +30,18 @@ int main(int argc, char** argv){
 
     int sock = socket(res->ai_family, res->ai_socktype, 0);
     if (sock == -1){
-        std::cerr << "Error creating socket\n";
+        std::cerr << "socket error: " << strerror(errno) << "\n";
         return -1;
     }
     ret = bind(sock, res->ai_addr, res->ai_addrlen);
     if (ret == -1){
-        std::cerr << "Error binding socket\n";
+        std::cerr << "bind error: " << strerror(errno) << "\n";
         return -1;
     }
 
     ret = listen(sock, 5);
     if (ret == -1){
-        std::cerr << "Error binding socket\n";
+        std::cerr << "listen error: " << strerror(errno) << "\n";
         return -1;
     }
 
@@ -49,7 +49,7 @@ int main(int argc, char** argv){
     socklen_t clientelen = sizeof(struct sockaddr);
     int cliente_sd = accept(sock, &cliente, &clientelen);
     if (cliente_sd == -1){
-        std::cerr << "Error accepting client\n";
+        std::cerr << "accept error: " << strerror(errno) << "\n";
         return -1;
     }
 
@@ -58,7 +58,7 @@ int main(int argc, char** argv){
 
     ret = getnameinfo(&cliente, clientelen, host, NI_MAXHOST, serv, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV );
     if (ret != 0){
-        std::cerr << "Error in getnameinfo\n";
+        std::cerr << "getnameinfo error: " << strerror(errno) << "\n";
         return -1;
     }
     std::cout << "Conexión desde " << host << " " << serv << "\n";
@@ -68,24 +68,24 @@ int main(int argc, char** argv){
     while (true){
         bytes = recv(cliente_sd, (void*)buffer, 79, 0);
         if (bytes == -1){
-            std::cerr << "Error sending message\n";
+            std::cerr << "recv error: " << strerror(errno) << "\n";
             return -1;
         }
         else if (bytes == 0) {
             std::cout << "Conexión terminada\n";
             ret = close(cliente_sd);
             if (ret == -1){
-                std::cerr << "Error closing client socket\n";
+                std::cerr << "close error: " << strerror(errno) << "\n";
                 return -1;
             }
             cliente_sd = accept(sock, &cliente, &clientelen);
             if (cliente_sd == -1){
-                std::cerr << "Error accepting client\n";
+                std::cerr << "accept error: " << strerror(errno) << "\n";
                 return -1;
             }
             ret = getnameinfo(&cliente, clientelen, host, NI_MAXHOST, serv, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV );
             if (ret != 0){
-                std::cerr << "Error in getnameinfo\n";
+                std::cerr << "getnameinfo error: " << strerror(errno) << "\n";
                 return -1;
             }
             std::cout << "Conexión desde " << host << " " << serv << "\n";

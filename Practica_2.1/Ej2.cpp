@@ -29,12 +29,12 @@ int main(int argc, char** argv){
 
     int sock = socket(res->ai_family, res->ai_socktype, 0);
     if (sock == -1){
-        std::cerr << "Error creating socket\n";
+        std::cerr << "socket error: " << strerror(errno) << "\n";
         return -1;
     }
     ret = bind(sock, res->ai_addr, res->ai_addrlen);
     if (ret == -1){
-        std::cerr << "Error binding socket\n";
+        std::cerr << "bind error: " << strerror(errno) << "\n";
         return -1;
     }
 
@@ -48,7 +48,7 @@ int main(int argc, char** argv){
     while (buffer[0] != 'q'){
         bytes = recvfrom(sock, (void*)buffer, 80, 0, &cliente, &clientelen);
         if (bytes == -1){
-            std::cerr << "Cannot receive bytes from address\n";
+            std::cerr << "recvfrom error: " << strerror(errno) << "\n";
             return -1;
         }
 
@@ -73,14 +73,14 @@ int main(int argc, char** argv){
         else if (buffer[0] == 'q') std::cout << "Saliendo...\n";
         else std::cout << "Comando no soportado " << buffer[0] << "\n";
         if (ret == -1){
-            std::cerr << "Error in sendto\n";
+            std::cerr << "socket error: " << strerror(errno) << "\n";
             return -1;
         }
 
-        if (buffer[0] == 'd' || buffer[0] == 't') {
+        if (buffer[0] != 'q') {
             ret = getnameinfo(&cliente, clientelen,host, NI_MAXHOST, serv, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV );
             if (ret != 0){
-                std::cerr << "Error in getnameinfo\n";
+                std::cerr << "getnameinfo error: " << strerror(errno) << "\n";
                 return -1;
             }  
             std::cout << bytes << " bytes de " << host << ":" << serv << "\n";
@@ -89,7 +89,7 @@ int main(int argc, char** argv){
     freeaddrinfo(res);
     ret = close(sock);
     if (ret == -1){
-        std::cerr << "Error closing socket\n";
+        std::cerr << "close error: " << strerror(errno) << "\n";
         return -1;
     }
     return 0;

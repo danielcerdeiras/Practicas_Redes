@@ -23,7 +23,7 @@ int main(int argc, char** argv){
     //Dado un host y un servicio, devolviendo la informacion en res y sus caracteristicas en info.
     int ret = getaddrinfo(argv[1], "9999", &info, &res);
     if (ret != 0){
-        std::cerr << "getaddrinfo error: " << strerror(errno) << "\n";
+        std::cerr << "Error in getaddrinfo: " << gai_strerror(ret) << "\n";
         return -1;
     }
 
@@ -35,7 +35,7 @@ int main(int argc, char** argv){
 
     ret = getaddrinfo(argv[1], argv[2], &info, &res);
     if (ret != 0){
-        std::cerr << "getaddrinfo error: " << strerror(errno) << "\n";
+        std::cerr << "Error in getaddrinfo: " << gai_strerror(ret) << "\n";
         return -1;
     }
 
