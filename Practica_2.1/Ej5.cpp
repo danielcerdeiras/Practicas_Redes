@@ -20,20 +20,13 @@ int main(int argc, char** argv){
     info.ai_family = AF_INET;
     info.ai_socktype = SOCK_STREAM;
 
-    //Dado un host y un servicio, devolviendo la informacion en res y sus caracteristicas en info.
-    int ret = getaddrinfo(argv[1], "9999", &info, &res);
-    if (ret != 0){
-        std::cerr << "Error in getaddrinfo: " << gai_strerror(ret) << "\n";
-        return -1;
-    }
-
-    int sock = socket(res->ai_family, res->ai_socktype, 0);
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1){
         std::cerr << "socket error: " << strerror(errno) << "\n";
         return -1;
     }
 
-    ret = getaddrinfo(argv[1], argv[2], &info, &res);
+    int ret = getaddrinfo(argv[1], argv[2], &info, &res);
     if (ret != 0){
         std::cerr << "Error in getaddrinfo: " << gai_strerror(ret) << "\n";
         return -1;

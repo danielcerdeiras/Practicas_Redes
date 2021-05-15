@@ -93,7 +93,7 @@ int main(int argc, char** argv){
     for (int i = 0; i < MAX_THREADS; i++){
         MessageThread *mt = new MessageThread(sock);
 
-        std::thread([&mt](){
+        std::thread([mt](){
             mt->do_message();
             delete mt;
         }).detach();
