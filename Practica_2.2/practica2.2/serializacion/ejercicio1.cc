@@ -83,6 +83,10 @@ int main(int argc, char **argv)
     write(fileWrite, one_w.data(), one_w.size());
     close(fileWrite);
 
+    //El comando od escribe en consola los contenidos de un archivo
+    //en octal u otros formatos. Al usar el comando se puede ver
+    //la información que se utiliza al serializar.
+
     return 0;
 }
 
