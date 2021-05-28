@@ -83,7 +83,7 @@ void ChatServer::do_messages()
             auto it = clients.begin();
             while (it != clients.end()){
                 if (it->get() == client) continue;
-                it->get()->send(mess, *client);
+                socket->send(mess, it->get());
                 ++it;
             }
             break;
