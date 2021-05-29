@@ -32,6 +32,8 @@ Socket::Socket(const char * address, const char * port):sd(-1)
     sa_len = res->ai_addrlen;
 
     freeaddrinfo(res);
+
+    bind();
 }
 
 int Socket::recv(Serializable &obj, Socket * &sock)
@@ -64,7 +66,7 @@ int Socket::send(Serializable& obj, const Socket& sock)
     //Enviar el objeto binario a sock usando el socket sd
 
     obj.to_bin();
-    int ret = sendto(sd, obj.data(), MAX_MESSAGE_SIZE, 0, &sa, sa_len);
+    int ret = sendto(sd, obj.data(), MAX_MESSAGE_SIZE, 0, &sock.sa, sock.sa_len);
     if (ret == -1) {
         std::cerr << "sendto error: " << strerror(errno) << "\n";
         return -1;
@@ -84,6 +86,7 @@ bool operator== (const Socket &s1, const Socket &s2)
     return (addr1->sin_family == addr2->sin_family &&
             addr1->sin_addr.s_addr == addr2->sin_addr.s_addr &&
             addr1->sin_port == addr2->sin_port);
+    return true;
 };
 
 std::ostream& operator<<(std::ostream& os, const Socket& s)

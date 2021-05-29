@@ -14,10 +14,10 @@ void ChatMessage::to_bin()
     memcpy(tmp, &type, sizeof(uint8_t));
     tmp += sizeof(uint8_t);
 
-    memcpy(tmp, &nick, 8 * sizeof(char));
+    memcpy(tmp, nick.c_str(), 8 * sizeof(char));
     tmp += 8 * sizeof(char);
 
-    memcpy(tmp, &message, 80 * sizeof(char));
+    memcpy(tmp, message.c_str(), 80 * sizeof(char));
 }
 
 int ChatMessage::from_bin(char * bobj)
@@ -28,13 +28,13 @@ int ChatMessage::from_bin(char * bobj)
 
     char* tmp = _data;
 
-    memcpy(&type, tmp, sizeof(int16_t));
-    tmp += sizeof(int16_t);
+    memcpy(&type, tmp, sizeof(uint8_t));
+    tmp += sizeof(uint8_t);
 
-    memcpy(&nick, tmp, 8 * sizeof(char));
+    nick = tmp;
     tmp += 8 * sizeof(char);
 
-    memcpy(&message, tmp, 80 * sizeof(char));
+    message = tmp;
 
     return 0;
 }
@@ -60,6 +60,7 @@ void ChatServer::do_messages()
         ChatMessage mess;
         Socket* client;
         socket.recv(mess, client);
+        std::cout << "Type: " << int(mess.type) << " Nick: " << mess.nick << " Message: " << mess.message << "\n";
         switch (mess.type)
         {
         case ChatMessage::LOGIN:
@@ -69,7 +70,7 @@ void ChatServer::do_messages()
             {
             auto it = clients.begin();
             while (it != clients.end()){
-                if (it->get() == client) {
+                if (*it->get() == *client) {
                     clients.erase(it);
                     it->release();
                     break;
@@ -82,8 +83,8 @@ void ChatServer::do_messages()
             {
             auto it = clients.begin();
             while (it != clients.end()){
-                if (it->get() == client) continue;
-                socket.send(mess, *it->get());
+                if (!(*it->get() == *client))
+                    socket.send(mess, *it->get());
                 ++it;
             }
             break;
@@ -151,4 +152,3 @@ void ChatClient::net_thread()
         std::cout << m.nick << ": " << m.message << "\n";
     }
 }
-
